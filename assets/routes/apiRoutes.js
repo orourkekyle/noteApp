@@ -27,14 +27,14 @@ module.exports = function(app){
     app.delete('/api/notes:id', function (req, res) {
         const { id } = req.params;
 
-        const filteredId = noteDB.filter(function (noteDB) {
-          console.log("noteDB.id: ", noteDB.id);
-          console.log("id: ", parseInt(id));
-          return noteDB.id !== parseInt(id);
+        var dataAfterDeleting = noteDB.filter(note => note.id !== id);
+
+        fs.writeFile(path.join(__dirname, "../db/db.json"), dataAfterDeleting, function(err){
+            if (err){
+                console.log("ERROR Creating new db.json");
+            }else{
+                console.log("SUCCESSFUL Deletion");
+            }
         });
-    
-        console.log("filteredId: ", filteredId);
-        noteDB = filteredId;
-        res.json(filteredId);
       });
 };
