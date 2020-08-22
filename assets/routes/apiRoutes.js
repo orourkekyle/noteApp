@@ -8,13 +8,13 @@ module.exports = function(app){
     });
 
     app.post("/api/notes", function(req, res){
-        fs.readFile("../db/db.json",(err,data)=>{
+        fs.readFile(path.join(__dirname, "../db/db.json"),(err,data)=>{
             if(err) throw err;
             let notes =JSON.parse(data);
 
             notes.push(req.body);
             const jsonString = JSON.stringify(notes);
-            fs.writeFile("../db/db.json", jsonString, (err)=> {
+            fs.writeFile(path.join(__dirname, "../db/db.json"), jsonString, (err)=> {
                 if (err){
                     console.log("Write File ERROR", err);
                 }else{
@@ -23,4 +23,18 @@ module.exports = function(app){
             });
         });
     });
+
+    app.delete('/api/notes:id', function (req, res) {
+        const { id } = req.params;
+
+        const filteredId = noteDB.filter(function (noteDB) {
+          console.log("noteDB.id: ", noteDB.id);
+          console.log("id: ", parseInt(id));
+          return noteDB.id !== parseInt(id);
+        });
+    
+        console.log("filteredId: ", filteredId);
+        noteDB = filteredId;
+        res.json(filteredId);
+      });
 };
